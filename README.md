@@ -50,7 +50,7 @@ _(Run the server and use the dashboard at http://localhost:8000)_
 
 ```bash
 # 1. Clone / download the project
-cd investment_agent
+cd Folder_Name
 
 # 2. Create and activate a virtual environment (recommended)
 python -m venv venv

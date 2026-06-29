@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InvestIQ — Market Dashboard</title>
+  <meta name="description" content="Simply Wall St-inspired stock market dashboard with ticker cards, charts, and portfolio analysis."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    /* ── Reset & Base ──────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #141414;
+      color: #fff;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Design Tokens ────────────────────────────────────────────────────── */
+    :root {
+      --blue:   #2a78d6;
+      --teal:   #1baf7a;
+      --amber:  #eda100;
+      --violet: #4a3aa7;
+      --red:    #e34948;
+      --orange: #eb6834;
+      --gray:   #898781;
+      --card-bg: #1e1e1e;
+      --page-bg: #141414;
+      --border: rgba(255,255,255,0.08);
+      --muted:  #898781;
+      --radius: 12px;
+      --pad:    14px;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────────────────── */
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 20px 60px; }
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .page-header a {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .page-header a:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
+    .page-title { font-size: 1.4rem; font-weight: 700; flex: 1; }
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 700px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card-bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--pad);
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: #9b9b9b;
+      margin-bottom: 14px;
+    }
+
+    /* ── 1. Ticker Row ────────────────────────────────────────────────────── */
+    .ticker-row-section { margin-bottom: 22px; }
+    .ticker-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding-bottom: 4px;
+    }
+    .ticker-row::-webkit-scrollbar { display: none; }
+    .ticker-card {
+      flex: 0 0 140px;
+      background: var(--card-bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .ticker-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .ticker-accent { height: 3px; width: 100%; }
+    .ticker-body { padding: 10px 10px 10px; }
+    .ticker-symbol {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .ticker-name {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ticker-price { font-size: 18px; font-weight: 600; color: #fff; line-height: 1; margin-bottom: 4px; }
+    .ticker-change {
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .ticker-change.up   { color: var(--teal); }
+    .ticker-change.down { color: var(--red); }
+    .ticker-sparkline { display: block; width: 100%; height: 32px; }
+
+    /* ── Snowflake Pentagon ───────────────────────────────────────────────── */  
+    .snowflake-wrap {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .snowflake-canvas { flex-shrink: 0; }
+    .snowflake-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .sf-legend-item { }
+    .sf-legend-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .sf-legend-name { font-size: 11px; color: #ccc; }
+    .sf-legend-score { font-size: 11px; font-weight: 700; }
+    .sf-bar-track { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+    .sf-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
+
+    /* ── Portfolio donut legend ───────────────────────────────────────────── */
+    .donut-wrap { position: relative; }
+    .donut-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+    .donut-center-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .donut-center-value { font-size: 18px; font-weight: 700; color: #fff; }
+    .donut-grid { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+    .donut-legend-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+    .donut-legend-left { display: flex; align-items: center; gap: 6px; }
+    .donut-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .donut-legend-name { color: #ccc; }
+    .donut-legend-pct { color: #fff; font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  
+  <!-- Page Header -->
+  <div class="page-header">
+    <span class="page-title">Market Dashboard</span>
+    <a href="/">← Back to Research</a>
+  </div>
+
+  <!-- ═══ 1. TICKER CARDS ════════════════════════════════════════════════ -->
+  <div class="ticker-row-section">
+    <div class="section-label">Watchlist</div>
+    <div class="ticker-row" id="tickerRow">
+      <!-- Built by JS -->
+    </div>
+  </div>
+
+  <!-- ═══ CHARTS GRID ═══════════════════════════════════════════════════ -->
+  <div class="charts-grid">
+
+    <!-- ═══ 2. Revenue vs Earnings ═══════════════════════════════════════ -->
+    <div class="card">
+      <div class="card-title">Revenue vs Net Income — Historical &amp; Forecast</div>
+      <canvas id="revenueEarningsChart" height="200"></canvas>
+    </div>
+
+    <!-- ═══ 3. Price vs Fair Value ════════════════════════════════════════ -->
+    <div class="card">
+      <div class="card-title">Price vs Fair Value — Last 12 Months</div>
+      <canvas id="fairValueChart" height="200"></canvas>
+    </div>
+
+    <!-- ═══ 4. Portfolio Donut ════════════════════════════════════════════ -->
+    <div class="card">
+      <div class="card-title">Portfolio Allocation</div>
+      <div class="donut-wrap">
+        <canvas id="portfolioDonut" height="180"></canvas>
+        <div class="donut-center">
+          <div class="donut-center-label">Total Value</div>
+          <div class="donut-center-value">$84.2K</div>
+        </div>
+      </div>
+      <div class="donut-grid" id="donutLegend"></div>
+    </div>
+
+    <!-- ═══ 5. Snowflake Pentagon ═════════════════════════════════════════ -->
+    <div class="card">
+      <div class="card-title">Snowflake Analysis</div>
+      <div class="snowflake-wrap">
+        <canvas id="snowflakeCanvas" class="snowflake-canvas" width="150" height="150"></canvas>
+        <div class="snowflake-legend" id="snowflakeLegend"></div>
+      </div>
+    </div>
+
+    <!-- ═══ 6. Dividend Forecast ══════════════════════════════════════════ -->
+    <div class="card" style="grid-column: 1 / -1;">
+      <div class="card-title">Dividend Per Share — Historical &amp; Forecast</div>
+      <canvas id="dividendChart" height="160"></canvas>
+    </div>
+
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CHART DEFAULTS
+══════════════════════════════════════════════════════════════════════════ */
+const C = {
+  blue:   '#2a78d6',
+  teal:   '#1baf7a',
+  amber:  '#eda100',
+  violet: '#4a3aa7',
+  red:    '#e34948',
+  orange: '#eb6834',
+  gray:   '#898781',
+  muted:  '#898781',
+  font:   "'Inter', system-ui, sans-serif",
+  grid:   'rgba(255,255,255,0.05)',
+};
+
+Chart.defaults.color = C.muted;
+Chart.defaults.font.family = C.font;
+Chart.defaults.font.size = 10;
+
+/* ══════════════════════════════════════════════════════════════════════════
+   1. TICKER CARDS
+══════════════════════════════════════════════════════════════════════════ */
+const TICKERS = [
+  { sym: 'AAPL', name: 'Apple Inc.',        price: 213.07, chg: 1.24,  spark: [184,188,192,195,200,210,213], color: '#2a78d6' },
+  { sym: 'NVDA', name: 'NVIDIA Corp.',      price: 875.40, chg: 3.81,  spark: [580,640,720,760,800,850,875], color: '#1baf7a' },
+  { sym: 'TSLA', name: 'Tesla Inc.',        price: 176.50, chg: -2.15, spark: [210,200,190,185,180,178,176], color: '#e34948' },
+  { sym: 'MSFT', name: 'Microsoft Corp.',   price: 416.78, chg: 0.68,  spark: [390,395,400,405,410,412,416], color: '#eda100' },
+  { sym: 'GOOGL', name: 'Alphabet Inc.',    price: 174.15, chg: 1.10,  spark: [155,158,162,166,170,172,174], color: '#4a3aa7' },
+  { sym: 'AMZN', name: 'Amazon.com Inc.',   price: 186.30, chg: 0.43,  spark: [178,180,182,183,184,185,186], color: '#eb6834' },
+];
+
+function buildSparkSVG(data, up) {
+  const w = 120, h = 32, pad = 2;
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const pts = data.map((v, i) => {
+    const x = pad + (i / (data.length - 1)) * (w - pad * 2);
+    const y = h - pad - ((v - min) / range) * (h - pad * 2);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const polyline = pts.join(' ');
+  const color = up ? '#1baf7a' : '#e34948';
+  const fillPts = [
+    `${pad},${h - pad}`,
+    ...pts,
+    `${w - pad},${h - pad}`
+  ].join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" class="ticker-sparkline">
+    <polygon points="${fillPts}" fill="${color}" fill-opacity="0.12"/>
+    <polyline points="${polyline}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+  </svg>`;
+}
+
+const tickerRow = document.getElementById('tickerRow');
+TICKERS.forEach(t => {
+  const up = t.chg >= 0;
+  const card = document.createElement('div');
+  card.className = 'ticker-card';
+  card.innerHTML = `
+    <div class="ticker-accent" style="background:${t.color};"></div>
+    <div class="ticker-body">
+      <div class="ticker-symbol">${t.sym}</div>
+      <div class="ticker-name">${t.name}</div>
+      <div class="ticker-price">$${t.price.toFixed(2)}</div>
+      <div class="ticker-change ${up ? 'up' : 'down'}">${up ? '▲' : '▼'} ${Math.abs(t.chg).toFixed(2)}%</div>
+      ${buildSparkSVG(t.spark, up)}
+    </div>`;
+  tickerRow.appendChild(card);
+});
+
+/* ══════════════════════════════════════════════════════════════════════════
+   2. REVENUE vs EARNINGS BAR CHART
+══════════════════════════════════════════════════════════════════════════ */
+(function() {
+  const ctx = document.getElementById('revenueEarningsChart').getContext('2d');
+  const labels = ['2021','2022','2023','2024','2025F','2026F'];
+  const isForecast = [false,false,false,false,true,true];
+
+  const revData  = [274.5, 394.3, 383.3, 391.0, 418.0, 452.0];
+  const incData  = [94.7,  99.8,  97.0,  101.0, 116.0, 130.0];
+
+  const solidBlue  = '#2a78d6';
+  const solidTeal  = '#1baf7a';
+  const fcastBlue  = 'rgba(42,120,214,0.35)';
+  const fcastTeal  = 'rgba(27,175,122,0.35)';
+
+  const revColors = isForecast.map(f => f ? fcastBlue : solidBlue);
+  const incColors = isForecast.map(f => f ? fcastTeal : solidTeal);
+
+  // Plugin to draw dashed line + label between past/forecast
+  const forecastDividerPlugin = {
+    id: 'forecastDivider',
+    afterDraw(chart) {
+      const { ctx: c, chartArea: { top, bottom }, scales: { x } } = chart;
+      // Index 3.5 is midpoint between 2024 and 2025F
+      const xPos = x.getPixelForValue(3.5);
+      c.save();
+      c.setLineDash([5, 4]);
+      c.strokeStyle = 'rgba(255,255,255,0.2)';
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(xPos, top);
+      c.lineTo(xPos, bottom);
+      c.stroke();
+      c.setLineDash([]);
+      c.fillStyle = 'rgba(255,255,255,0.35)';
+      c.font = "bold 9px 'Inter', sans-serif";
+      c.textAlign = 'center';
+      c.fillText('Forecast →', xPos + 28, top + 12);
+      c.restore();
+    }
+  };
+
+  new Chart(ctx, {
+    type: 'bar',
+    plugins: [forecastDividerPlugin],
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Revenue ($B)',
+          data: revData,
+          backgroundColor: revColors,
+          borderRadius: 4,
+          borderSkipped: false,
+        },
+        {
+          label: 'Net Income ($B)',
+          data: incData,
+          backgroundColor: incColors,
+          borderRadius: 4,
+          borderSkipped: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: C.muted, boxWidth: 10, padding: 12, font: { size: 11 } }
+        },
+        tooltip: {
+          backgroundColor: '#222',
+          titleColor: '#fff',
+          bodyColor: '#ccc',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: { label: t => ` ${t.dataset.label}: $${t.raw}B` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: C.muted, font: { size: 10 } }, grid: { display: false } },
+        y: {
+          ticks: { color: C.muted, font: { size: 10 }, callback: v => `$${v}B` },
+          grid: { color: C.grid },
+          beginAtZero: false
+        }
+      }
+    }
+  });
+})();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   3. PRICE vs FAIR VALUE LINE CHART
+══════════════════════════════════════════════════════════════════════════ */
+(function() {
+  const ctx = document.getElementById('fairValueChart').getContext('2d');
+  const months = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+  const price     = [170, 165, 162, 158, 172, 185, 199, 204, 212, 208, 215, 213];
+  const fairValue = [180, 182, 184, 186, 188, 192, 194, 196, 198, 200, 202, 204];
+  const upper = fairValue.map(v => v * 1.15);
+  const lower = fairValue.map(v => v * 0.85);
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'Upper Band',
+          data: upper,
+          fill: '+1',
+          backgroundColor: 'rgba(27,175,122,0.10)',
+          borderColor: 'transparent',
+          pointRadius: 0,
+          tension: 0.4,
+        },
+        {
+          label: 'Lower Band',
+          data: lower,
+          fill: false,
+          borderColor: 'transparent',
+          pointRadius: 0,
+          tension: 0.4,
+        },
+        {
+          label: 'Fair Value',
+          data: fairValue,
+          fill: false,
+          borderColor: C.teal,
+          borderWidth: 2,
+          borderDash: [5, 4],
+          pointRadius: 0,
+          tension: 0.4,
+        },
+        {
+          label: 'Stock Price',
+          data: price,
+          fill: false,
+          borderColor: C.blue,
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.4,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: {
+            color: C.muted,
+            font: { size: 11 },
+            padding: 12,
+            filter: item => item.text !== 'Upper Band' && item.text !== 'Lower Band'
+          }
+        },
+        tooltip: {
+          backgroundColor: '#222',
+          titleColor: '#fff',
+          bodyColor: '#ccc',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 10,
+          filter: item => item.dataset.label === 'Stock Price' || item.dataset.label === 'Fair Value',
+          callbacks: { label: t => ` ${t.dataset.label}: $${t.raw}` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: C.muted, font: { size: 10 } }, grid: { display: false } },
+        y: {
+          ticks: { color: C.muted, font: { size: 10 }, callback: v => `$${v}` },
+          grid: { color: C.grid }
+        }
+      }
+    }
+  });
+})();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   4. PORTFOLIO DONUT CHART
+══════════════════════════════════════════════════════════════════════════ */
+(function() {
+  const ctx = document.getElementById('portfolioDonut').getContext('2d');
+  const sectors = [
+    { name: 'Technology',  pct: 45, color: C.blue   },
+    { name: 'Healthcare',  pct: 20, color: C.teal   },
+    { name: 'Finance',     pct: 18, color: C.amber  },
+    { name: 'Energy',      pct: 10, color: C.violet },
+    { name: 'Other',       pct:  7, color: C.gray   },
+  ];
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: sectors.map(s => s.name),
+      datasets: [{
+        data: sectors.map(s => s.pct),
+        backgroundColor: sectors.map(s => s.color),
+        borderColor: '#1e1e1e',
+        borderWidth: 2,
+        hoverOffset: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      cutout: '68%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#222',
+          bodyColor: '#ccc',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          callbacks: { label: t => ` ${t.label}: ${t.raw}%` }
+        }
+      }
+    }
+  });
+
+  // Custom HTML legend
+  const legend = document.getElementById('donutLegend');
+  sectors.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'donut-legend-row';
+    row.innerHTML = `
+      <div class="donut-legend-left">
+        <div class="donut-legend-dot" style="background:${s.color};"></div>
+        <span class="donut-legend-name">${s.name}</span>
+      </div>
+      <span class="donut-legend-pct">${s.pct}%</span>`;
+    legend.appendChild(row);
+  });
+})();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   5. SNOWFLAKE PENTAGON CHART
+══════════════════════════════════════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('snowflakeCanvas');
+  const ctx    = canvas.getContext('2d');
+  const dpr    = window.devicePixelRatio || 1;
+  const size   = 150;
+  canvas.width  = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width  = size + 'px';
+  canvas.style.height = size + 'px';
+  ctx.scale(dpr, dpr);
+
+  const cx = size / 2, cy = size / 2;
+  const maxR = 60; // max spider radius
+  const MAX   = 5;
+  const RINGS  = 5;
+  const AXES = [
+    { name: 'Value',    score: 4, color: C.blue   },
+    { name: 'Future',   score: 3, color: C.teal   },
+    { name: 'Past',     score: 4, color: C.amber  },
+    { name: 'Health',   score: 5, color: C.violet },
+    { name: 'Dividend', score: 3, color: C.orange },
+  ];
+  const N = AXES.length;
+  const angle0 = -Math.PI / 2; // start at top
+
+  function angleFor(i) { return angle0 + (2 * Math.PI / N) * i; }
+  function pointAt(r, i) {
+    const a = angleFor(i);
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+  }
+
+  // Draw faint grid rings
+  for (let ring = 1; ring <= RINGS; ring++) {
+    const r = (ring / RINGS) * maxR;
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const p = pointAt(r, i);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // Draw axis lines
+  AXES.forEach((_, i) => {
+    const p = pointAt(maxR, i);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  });
+
+  // Draw axis labels
+  AXES.forEach((a, i) => {
+    const p = pointAt(maxR + 12, i);
+    ctx.fillStyle = '#ccc';
+    ctx.font = `bold 8px 'Inter', system-ui`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(a.name, p.x, p.y);
+  });
+
+  // Draw filled polygon from scores
+  ctx.beginPath();
+  AXES.forEach((a, i) => {
+    const r = (a.score / MAX) * maxR;
+    const p = pointAt(r, i);
+    i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(42,120,214,0.18)';
+  ctx.fill();
+  ctx.strokeStyle = '#2a78d6';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Draw colored dots at each score point
+  AXES.forEach((a, i) => {
+    const r = (a.score / MAX) * maxR;
+    const p = pointAt(r, i);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = a.color;
+    ctx.fill();
+    ctx.strokeStyle = '#1e1e1e';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  });
+
+  // Build legend
+  const legendEl = document.getElementById('snowflakeLegend');
+  AXES.forEach(a => {
+    const item = document.createElement('div');
+    item.className = 'sf-legend-item';
+    item.innerHTML = `
+      <div class="sf-legend-row">
+        <span class="sf-legend-name">${a.name}</span>
+        <span class="sf-legend-score" style="color:${a.color}">${a.score}/5</span>
+      </div>
+      <div class="sf-bar-track">
+        <div class="sf-bar-fill" style="width:${(a.score/5)*100}%; background:${a.color};"></div>
+      </div>`;
+    legendEl.appendChild(item);
+  });
+})();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   6. DIVIDEND FORECAST BAR CHART
+══════════════════════════════════════════════════════════════════════════ */
+(function() {
+  const ctx = document.getElementById('dividendChart').getContext('2d');
+  const labels  = ['2021','2022','2023','2024','2025F','2026F'];
+  const divData  = [2.40, 2.85, 3.10, 3.60, 4.10, 4.70];
+  const isForecast = [false,false,false,false,true,true];
+  const colors = isForecast.map(f => f ? 'rgba(74,58,167,0.38)' : '#4a3aa7');
+
+  // Plugin to draw value label above each bar
+  const barLabelPlugin = {
+    id: 'barLabels',
+    afterDatasetsDraw(chart) {
+      const { ctx: c, data: d, scales: { x, y } } = chart;
+      c.save();
+      c.font = `600 10px 'Inter', system-ui`;
+      c.textAlign = 'center';
+      d.datasets[0].data.forEach((v, i) => {
+        const meta = chart.getDatasetMeta(0);
+        const bar  = meta.data[i];
+        const barX = bar.x;
+        const barY = y.getPixelForValue(v);
+        c.fillStyle = isForecast[i] ? 'rgba(255,255,255,0.4)' : '#ccc';
+        c.fillText(`$${v.toFixed(2)}`, barX, barY - 6);
+      });
+      c.restore();
+    }
+  };
+
+  new Chart(ctx, {
+    type: 'bar',
+    plugins: [barLabelPlugin],
+    data: {
+      labels,
+      datasets: [{
+        label: 'Dividend per Share',
+        data: divData,
+        backgroundColor: colors,
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#222',
+          bodyColor: '#ccc',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          callbacks: { label: t => ` DPS: $${t.raw.toFixed(2)}` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: C.muted, font: { size: 10 } }, grid: { display: false } },
+        y: {
+          ticks: {
+            color: C.muted,
+            font: { size: 10 },
+            callback: v => `$${v.toFixed(2)}`
+          },
+          grid: { color: C.grid },
+          beginAtZero: false
+        }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

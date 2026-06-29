@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InvestIQ – Professional Investment Research</title>
+  <meta name="description" content="AI-free, rule-based investment research platform. Analyse any company's financials, SWOT, risks and get a clear INVEST/HOLD/PASS recommendation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app-layout">
+  <!-- ═══════════════════════════════════════ SIDEBAR ══════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="8" fill="url(#navGrad)"/>
+        <path d="M8 22L13 15L17 19L22 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="22" cy="10" r="2" fill="white"/>
+        <defs><linearGradient id="navGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+      </svg>
+      <div class="brand-text">
+        <span class="nav-title">InvestIQ</span>
+        <span class="nav-badge">Rule-Based</span>
+      </div>
+    </div>
+    <div class="sidebar-links">
+      <a href="#" class="sidebar-link active">Dashboard</a>
+      <a href="/market/" class="sidebar-link">Market Dashboard</a>
+      <a href="#results" class="sidebar-link">Overview</a>
+      <a href="#scoring-section" class="sidebar-link">Radar & Score</a>
+      <a href="#swot-section" class="sidebar-link">Analysis</a>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <!-- ═══════════════════════════════════════ HERO / SEARCH ════════════════════ -->
+    <section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Research Any Company.<br/><span class="gradient-text">Get a Clear Decision.</span></h1>
+    <p class="hero-subtitle">Enter a company name or ticker to receive a full financial analysis, SWOT, risk assessment, and an objective INVEST / HOLD / PASS score — powered entirely by Python and verified financial data.</p>
+
+    <div class="search-container">
+      <div class="search-box">
+        <input id="companyInput" type="text" placeholder="Company name or ticker (e.g. Tesla, AAPL, Infosys)" autocomplete="off" />
+        <div id="autocomplete-dropdown" class="autocomplete-dropdown hidden"></div>
+      </div>
+      <button id="searchBtn" class="btn-primary" onclick="runAnalysis()">
+        <span id="searchBtnText">Analyze</span>
+        <svg id="searchBtnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <svg id="searchBtnSpinner" class="spinner hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+      </button>
+    </div>
+    <div class="example-tickers">
+      <span>Try:</span>
+      <button class="ticker-chip" onclick="quickSearch('TSLA')">TSLA</button>
+      <button class="ticker-chip" onclick="quickSearch('AAPL')">AAPL</button>
+      <button class="ticker-chip" onclick="quickSearch('MSFT')">MSFT</button>
+      <button class="ticker-chip" onclick="quickSearch('INFY')">INFY</button>
+      <button class="ticker-chip" onclick="quickSearch('AMZN')">AMZN</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ ERROR BANNER ════════════════════ -->
+<div id="errorBanner" class="error-banner hidden">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+  <span id="errorText">Error message</span>
+</div>
+
+<!-- ═══════════════════════════════════════ RESULTS ════════════════════════ -->
+<main id="results" class="results hidden">
+
+  <!-- ══ Company Overview ═════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Company Overview</h2>
+    </div>
+    <div class="company-header-card">
+      <div class="company-identity">
+        <div class="company-initials" id="companyInitials">--</div>
+        <div>
+          <h3 id="companyName" class="company-main-name">--</h3>
+          <p id="companyTicker" class="company-ticker-label">--</p>
+        </div>
+      </div>
+      <div class="company-meta-grid">
+        <div class="meta-item"><span class="meta-label">Sector</span><span class="meta-value" id="companySector">--</span></div>
+        <div class="meta-item"><span class="meta-label">Industry</span><span class="meta-value" id="companyIndustry">--</span></div>
+        <div class="meta-item"><span class="meta-label">CEO</span><span class="meta-value" id="companyCEO">--</span></div>
+        <div class="meta-item"><span class="meta-label">Headquarters</span><span class="meta-value" id="companyHQ">--</span></div>
+        <div class="meta-item"><span class="meta-label">Exchange</span><span class="meta-value" id="companyExchange">--</span></div>
+        <div class="meta-item"><span class="meta-label">Employees</span><span class="meta-value" id="companyEmployees">--</span></div>
+      </div>
+      <p class="company-description" id="companyDescription">--</p>
+    </div>
+  </section>
+
+  <!-- ══ Key Financial Metrics ════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header"><h2>Financial Metrics</h2></div>
+    <div class="metrics-grid" id="metricsGrid">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <!-- ══ Charts Row ═══════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header"><h2>Financial Charts</h2></div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h4>Revenue History</h4>
+        <canvas id="revenueChart" height="220"></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Financial Snowflake</h4>
+        <canvas id="scoreChart" height="220"></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Market Cap vs Peers (Top 5)</h4>
+        <canvas id="competitorChart" height="220"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Investment Score ══════════════════════════════════════════════════ -->
+  <section class="section" id="scoring-section">
+    <div class="section-header"><h2>Investment Score &amp; Recommendation</h2></div>
+    <div class="score-card">
+      <div class="score-display">
+        <div class="score-circle" id="scoreCircle">
+          <span class="score-number" id="scoreNumber">0</span>
+          <span class="score-denom">/10</span>
+        </div>
+        <div class="recommendation-badge" id="recommendationBadge">--</div>
+        <p class="score-summary" id="scoreSummary">--</p>
+      </div>
+      <div class="rules-breakdown" id="rulesBreakdown">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SWOT Analysis ═════════════════════════════════════════════════════ -->
+  <section class="section" id="swot-section">
+    <div class="section-header"><h2>SWOT Analysis</h2></div>
+    <div class="swot-grid">
+      <div class="swot-card swot-s">
+        <div class="swot-header"><div class="swot-icon">S</div><h4>Strengths</h4></div>
+        <ul id="swotStrengths"></ul>
+      </div>
+      <div class="swot-card swot-w">
+        <div class="swot-header"><div class="swot-icon">W</div><h4>Weaknesses</h4></div>
+        <ul id="swotWeaknesses"></ul>
+      </div>
+      <div class="swot-card swot-o">
+        <div class="swot-header"><div class="swot-icon">O</div><h4>Opportunities</h4></div>
+        <ul id="swotOpportunities"></ul>
+      </div>
+      <div class="swot-card swot-t">
+        <div class="swot-header"><div class="swot-icon">T</div><h4>Threats</h4></div>
+        <ul id="swotThreats"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Risk Analysis ════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header"><h2>Risk Analysis</h2></div>
+    <div class="risk-list" id="riskList"></div>
+  </section>
+
+  <!-- ══ Financial Health ══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header"><h2>Financial Health</h2></div>
+    <div class="health-card" id="healthCard">
+      <div class="health-badge" id="healthBadge">--</div>
+      <p class="health-summary" id="healthSummary">--</p>
+      <ul class="health-bullets" id="healthBullets"></ul>
+    </div>
+  </section>
+
+  <!-- ══ Growth Analysis ══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header"><h2>Growth Analysis</h2></div>
+    <div class="growth-card" id="growthCard">
+      <div class="growth-badge" id="growthBadge">--</div>
+      <p id="growthNarrative">--</p>
+      <div class="growth-stats">
+        <div class="stat"><span class="stat-label">Revenue Growth (YoY)</span><span class="stat-value" id="growthRevenue">--</span></div>
+        <div class="stat"><span class="stat-label">Earnings Growth (YoY)</span><span class="stat-value" id="growthEarnings">--</span></div>
+        <div class="stat"><span class="stat-label">Revenue CAGR</span><span class="stat-value" id="growthCAGR">--</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Competitor Analysis ═══════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header"><h2>Competitor Analysis</h2></div>
+    <div class="competitor-card">
+      <div class="competitor-position">
+        <div class="position-badge" id="competitorPosition">--</div>
+        <p id="competitorCommentary">--</p>
+      </div>
+      <div class="table-wrapper">
+        <table class="competitor-table">
+          <thead>
+            <tr><th>Company</th><th>Ticker</th><th>Market Cap</th><th>P/E Ratio</th></tr>
+          </thead>
+          <tbody id="competitorTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Latest News ═══════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header"><h2>Latest News</h2></div>
+    <div class="news-grid" id="newsGrid"></div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════ FOOTER ══════════════════════════ -->
+<footer class="footer">
+  <p>InvestIQ &copy; 2026 &mdash; Rule-based analysis only. Not financial advice. Data sourced from Yahoo Finance.</p>
+</footer>
+
+  </div> <!-- End .main-content -->
+</div> <!-- End .app-layout -->
+
+<!-- ═══════════════════════════════════════ CHART MODAL ══════════════════════════ -->
+<div id="chartModal" class="chart-modal hidden">
+  <div class="chart-modal-content">
+    <div class="chart-modal-header">
+      <h3 id="chartModalTitle">Chart Data</h3>
+      <button class="modal-close-btn" id="modalCloseBtn">&times;</button>
+    </div>
+    <div class="chart-modal-body">
+      <canvas id="modalCanvas"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

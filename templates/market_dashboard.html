@@ -145,7 +145,6 @@
     }
     .snowflake-canvas { flex-shrink: 0; }
     .snowflake-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-    .sf-legend-item { }
     .sf-legend-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
     .sf-legend-name { font-size: 11px; color: #ccc; }
     .sf-legend-score { font-size: 11px; font-weight: 700; }
@@ -1142,7 +1141,7 @@ function drawDetailSnowflake(scores, accentColor) {
   
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
-  const size = 110;
+  const size = 100;
   canvas.width = size * dpr;
   canvas.height = size * dpr;
   canvas.style.width = size + 'px';
@@ -1150,7 +1149,7 @@ function drawDetailSnowflake(scores, accentColor) {
   ctx.scale(dpr, dpr);
 
   const cx = size / 2, cy = size / 2;
-  const maxR = 36;
+  const maxR = 33;
   const MAX = 5;
   const RINGS = 5;
   

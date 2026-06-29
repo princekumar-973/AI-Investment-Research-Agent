@@ -175,68 +175,349 @@
     .donut-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
     .donut-legend-name { color: #ccc; }
     .donut-legend-pct { color: #fff; font-weight: 600; }
+
+    /* --- Brand & Theme Updates --- */
+    body { background: #111111; color: #fff; }
+    .card { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; }
+    
+    /* --- Search Section & Auto-suggest --- */
+    .search-section { position: relative; margin-bottom: 16px; width: 100%; }
+    .search-bar-container { position: relative; width: 100%; }
+    #dashboardSearch {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #dashboardSearch:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(42,120,214,0.2);
+    }
+    .search-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #1e1e1e;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      z-index: 1000;
+      max-height: 250px;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .search-dropdown.hidden { display: none; }
+    .search-dropdown-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .search-dropdown-item:last-child { border-bottom: none; }
+    .search-dropdown-item:hover { background: rgba(255,255,255,0.05); }
+    .dropdown-symbol { font-weight: 700; color: #fff; }
+    .dropdown-name { color: var(--muted); font-size: 12px; }
+
+    /* --- Breadcrumbs Trail --- */
+    .breadcrumb-trail {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .breadcrumb-pill {
+      cursor: pointer;
+      padding: 4px 10px;
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      color: #ccc;
+      transition: all 0.2s;
+    }
+    .breadcrumb-pill:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .breadcrumb-separator { color: rgba(255,255,255,0.2); }
+
+    /* --- View Switching --- */
+    .view-container {
+      transition: opacity 150ms ease-in-out;
+      opacity: 1;
+    }
+
+    /* --- Ticker Highlight Modifications --- */
+    .ticker-card {
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      position: relative;
+    }
+    .ticker-card.active-ticker {
+      background: #242424 !important;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .last-viewed-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 8px;
+      font-weight: 600;
+      color: #000;
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* --- Detail View Layout --- */
+    .detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .detail-title-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .detail-symbol-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .detail-btn-back {
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .detail-btn-back:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    .detail-btn-watchlist {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .detail-btn-watchlist:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 768px) {
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+    .detail-card {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: var(--pad);
+      height: 220px;
+      max-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .detail-card canvas {
+      max-height: 155px;
+    }
+    .key-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    @media (max-width: 600px) {
+      .key-stats-row { grid-template-columns: 1fr 1fr; }
+    }
+    .stat-pill {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-pill-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .stat-pill-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
 <div class="page-wrap">
   
-  <!-- Page Header -->
-  <div class="page-header">
+  <!-- Global Header Controls -->
+  <div class="page-header" style="margin-bottom: 12px;">
     <span class="page-title">Market Dashboard</span>
     <a href="/">← Back to Research</a>
   </div>
 
-  <!-- ═══ 1. TICKER CARDS ════════════════════════════════════════════════ -->
-  <div class="ticker-row-section">
-    <div class="section-label">Watchlist</div>
-    <div class="ticker-row" id="tickerRow">
-      <!-- Built by JS -->
+  <!-- Search Input -->
+  <div class="search-section">
+    <div class="search-bar-container">
+      <input type="text" id="dashboardSearch" placeholder="Search ticker (e.g. AAPL, NVDA, TSLA)..." autocomplete="off" />
+      <div id="searchDropdown" class="search-dropdown hidden"></div>
     </div>
   </div>
 
-  <!-- ═══ CHARTS GRID ═══════════════════════════════════════════════════ -->
-  <div class="charts-grid">
+  <!-- Breadcrumbs -->
+  <div class="breadcrumb-trail" id="breadcrumbTrail">
+    <span class="breadcrumb-pill" onclick="goBack()">Dashboard</span>
+  </div>
 
-    <!-- ═══ 2. Revenue vs Earnings ═══════════════════════════════════════ -->
-    <div class="card">
-      <div class="card-title">Revenue vs Net Income — Historical &amp; Forecast</div>
-      <canvas id="revenueEarningsChart" height="200"></canvas>
+  <!-- ═══ DASHBOARD VIEW ════════════════════════════════════════════════ -->
+  <div id="dashboard-view" class="view-container">
+    <!-- ═══ 1. TICKER CARDS ════════════════════════════════════════════════ -->
+    <div class="ticker-row-section">
+      <div class="section-label">Watchlist</div>
+      <div class="ticker-row" id="tickerRow">
+        <!-- Built by JS -->
+      </div>
     </div>
 
-    <!-- ═══ 3. Price vs Fair Value ════════════════════════════════════════ -->
-    <div class="card">
-      <div class="card-title">Price vs Fair Value — Last 12 Months</div>
-      <canvas id="fairValueChart" height="200"></canvas>
-    </div>
+    <!-- ═══ CHARTS GRID ═══════════════════════════════════════════════════ -->
+    <div class="charts-grid">
 
-    <!-- ═══ 4. Portfolio Donut ════════════════════════════════════════════ -->
-    <div class="card">
-      <div class="card-title">Portfolio Allocation</div>
-      <div class="donut-wrap">
-        <canvas id="portfolioDonut" height="180"></canvas>
-        <div class="donut-center">
-          <div class="donut-center-label">Total Value</div>
-          <div class="donut-center-value">$84.2K</div>
+      <!-- ═══ 2. Revenue vs Earnings ═══════════════════════════════════════ -->
+      <div class="card">
+        <div class="card-title">Revenue vs Net Income — Historical &amp; Forecast</div>
+        <canvas id="revenueEarningsChart" height="200"></canvas>
+      </div>
+
+      <!-- ═══ 3. Price vs Fair Value ════════════════════════════════════════ -->
+      <div class="card">
+        <div class="card-title">Price vs Fair Value — Last 12 Months</div>
+        <canvas id="fairValueChart" height="200"></canvas>
+      </div>
+
+      <!-- ═══ 4. Portfolio Donut ════════════════════════════════════════════ -->
+      <div class="card">
+        <div class="card-title">Portfolio Allocation</div>
+        <div class="donut-wrap">
+          <canvas id="portfolioDonut" height="180"></canvas>
+          <div class="donut-center">
+            <div class="donut-center-label">Total Value</div>
+            <div class="donut-center-value">$84.2K</div>
+          </div>
+        </div>
+        <div class="donut-grid" id="donutLegend"></div>
+      </div>
+
+      <!-- ═══ 5. Snowflake Pentagon ═════════════════════════════════════════ -->
+      <div class="card">
+        <div class="card-title">Snowflake Analysis</div>
+        <div class="snowflake-wrap">
+          <canvas id="snowflakeCanvas" class="snowflake-canvas" width="150" height="150"></canvas>
+          <div class="snowflake-legend" id="snowflakeLegend"></div>
         </div>
       </div>
-      <div class="donut-grid" id="donutLegend"></div>
+
+      <!-- ═══ 6. Dividend Forecast ══════════════════════════════════════════ -->
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="card-title">Dividend Per Share — Historical &amp; Forecast</div>
+        <canvas id="dividendChart" height="160"></canvas>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ DETAIL VIEW ═══════════════════════════════════════════════════ -->
+  <div id="detail-view" class="view-container" style="display: none; opacity: 0;">
+    <div class="detail-header">
+      <button class="detail-btn-back" onclick="goBack()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px; vertical-align: middle;">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to dashboard
+      </button>
+      <span class="detail-symbol-name" id="detailSymbolName">AAPL — Apple Inc.</span>
+      <button class="detail-btn-watchlist" id="detailWatchlistBtn" onclick="toggleWatchlist()">+ Watchlist</button>
     </div>
 
-    <!-- ═══ 5. Snowflake Pentagon ═════════════════════════════════════════ -->
-    <div class="card">
-      <div class="card-title">Snowflake Analysis</div>
-      <div class="snowflake-wrap">
-        <canvas id="snowflakeCanvas" class="snowflake-canvas" width="150" height="150"></canvas>
-        <div class="snowflake-legend" id="snowflakeLegend"></div>
+    <div class="detail-grid">
+      <!-- Chart 1: Price vs Fair Value -->
+      <div class="detail-card">
+        <div class="detail-card-title">Price vs Fair Value</div>
+        <div style="flex:1; position:relative; min-height:0; max-height:170px;">
+          <canvas id="detailPriceChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 2: Revenue vs Earnings -->
+      <div class="detail-card">
+        <div class="detail-card-title">Revenue vs Net Income</div>
+        <div style="flex:1; position:relative; min-height:0; max-height:170px;">
+          <canvas id="detailRevChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 3: Snowflake pentagon -->
+      <div class="detail-card">
+        <div class="detail-card-title">Snowflake Analysis</div>
+        <div class="snowflake-wrap" style="flex:1; gap:6px;">
+          <canvas id="detailSnowflakeCanvas"></canvas>
+          <div class="snowflake-legend" id="detailSnowflakeLegend" style="flex:1;"></div>
+        </div>
+      </div>
+
+      <!-- Chart 4: Dividend Forecast -->
+      <div class="detail-card">
+        <div class="detail-card-title">Dividend Per Share</div>
+        <div style="flex:1; position:relative; min-height:0; max-height:170px;">
+          <canvas id="detailDivChart"></canvas>
+        </div>
       </div>
     </div>
 
-    <!-- ═══ 6. Dividend Forecast ══════════════════════════════════════════ -->
-    <div class="card" style="grid-column: 1 / -1;">
-      <div class="card-title">Dividend Per Share — Historical &amp; Forecast</div>
-      <canvas id="dividendChart" height="160"></canvas>
+    <!-- Key stats row -->
+    <div class="key-stats-row" id="detailKeyStats">
+      <!-- Populated Dynamically -->
     </div>
-
   </div>
 </div>
 
@@ -266,15 +547,154 @@ Chart.defaults.font.size = 10;
 /* ══════════════════════════════════════════════════════════════════════════
    1. TICKER CARDS
 ══════════════════════════════════════════════════════════════════════════ */
-const TICKERS = [
-  { sym: 'AAPL', name: 'Apple Inc.',        price: 213.07, chg: 1.24,  spark: [184,188,192,195,200,210,213], color: '#2a78d6' },
-  { sym: 'NVDA', name: 'NVIDIA Corp.',      price: 875.40, chg: 3.81,  spark: [580,640,720,760,800,850,875], color: '#1baf7a' },
-  { sym: 'TSLA', name: 'Tesla Inc.',        price: 176.50, chg: -2.15, spark: [210,200,190,185,180,178,176], color: '#e34948' },
-  { sym: 'MSFT', name: 'Microsoft Corp.',   price: 416.78, chg: 0.68,  spark: [390,395,400,405,410,412,416], color: '#eda100' },
-  { sym: 'GOOGL', name: 'Alphabet Inc.',    price: 174.15, chg: 1.10,  spark: [155,158,162,166,170,172,174], color: '#4a3aa7' },
-  { sym: 'AMZN', name: 'Amazon.com Inc.',   price: 186.30, chg: 0.43,  spark: [178,180,182,183,184,185,186], color: '#eb6834' },
-];
+// --- State Management ---
+const state = {
+  view: 'dashboard',       // 'dashboard' | 'detail'
+  activeSymbol: null,
+  activeCompany: null,
+  searchHistory: [],       // Array of searched symbols
+  chartInstances: {}       // Store detail Chart.js instances here
+};
 
+// --- Cache for Detail View ---
+const chartCache = {};
+
+// Watchlist tracking
+const watchlistSymbols = new Set(['AAPL', 'NVDA', 'TSLA', 'MSFT', 'GOOGL', 'AMZN']);
+
+// --- High-Fidelity Mock Datasets ---
+const DATASETS = {
+  AAPL: {
+    sym: 'AAPL',
+    name: 'Apple Inc.',
+    price: 213.07,
+    chg: 1.24,
+    spark: [184, 188, 192, 195, 200, 210, 213],
+    color: '#2a78d6',
+    keyStats: { marketCap: '$3.28T', pe: '28.5', high52: '$220.20', low52: '$164.08' },
+    priceFairValue: {
+      price: [182, 175, 170, 165, 172, 185, 190, 195, 205, 208, 212, 213.07],
+      fairValue: [190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201]
+    },
+    revEarnings: {
+      revenue: [365.8, 394.3, 383.3, 391.0, 418.0, 452.0],
+      netIncome: [94.7, 99.8, 97.0, 101.0, 116.0, 130.0]
+    },
+    snowflake: [4, 3, 4, 5, 3], // Value, Future, Past, Health, Dividend
+    dividend: [2.20, 2.30, 2.40, 2.52, 2.65, 2.80]
+  },
+  NVDA: {
+    sym: 'NVDA',
+    name: 'NVIDIA Corp.',
+    price: 875.40,
+    chg: 3.81,
+    spark: [580, 640, 720, 760, 800, 850, 875],
+    color: '#1baf7a',
+    keyStats: { marketCap: '$2.15T', pe: '74.8', high52: '$974.00', low52: '$392.30' },
+    priceFairValue: {
+      price: [410, 450, 490, 560, 620, 680, 720, 780, 820, 850, 860, 875.40],
+      fairValue: [500, 520, 540, 560, 580, 600, 620, 645, 670, 695, 715, 740]
+    },
+    revEarnings: {
+      revenue: [26.9, 27.0, 60.9, 82.0, 110.0, 135.0],
+      netIncome: [9.7, 4.4, 29.8, 45.0, 62.0, 78.0]
+    },
+    snowflake: [2, 5, 5, 4, 1], // Value, Future, Past, Health, Dividend
+    dividend: [0.16, 0.16, 0.16, 0.16, 0.18, 0.20]
+  },
+  TSLA: {
+    sym: 'TSLA',
+    name: 'Tesla Inc.',
+    price: 176.50,
+    chg: -2.15,
+    spark: [210, 200, 190, 185, 180, 178, 176],
+    color: '#e34948',
+    keyStats: { marketCap: '$562B', pe: '60.4', high52: '$299.29', low52: '$138.80' },
+    priceFairValue: {
+      price: [260, 250, 245, 220, 235, 248, 210, 190, 180, 175, 172, 176.50],
+      fairValue: [210, 208, 206, 204, 202, 200, 198, 196, 194, 192, 190, 188]
+    },
+    revEarnings: {
+      revenue: [53.8, 81.5, 96.8, 98.0, 115.0, 132.0],
+      netIncome: [5.5, 12.6, 15.0, 13.5, 16.5, 20.0]
+    },
+    snowflake: [2, 4, 3, 5, 0], // Value, Future, Past, Health, Dividend
+    dividend: [0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
+  },
+  MSFT: {
+    sym: 'MSFT',
+    name: 'Microsoft Corp.',
+    price: 416.78,
+    chg: 0.68,
+    spark: [390, 395, 400, 405, 410, 412, 416],
+    color: '#eda100',
+    keyStats: { marketCap: '$3.10T', pe: '36.2', high52: '$430.82', low52: '$315.18' },
+    priceFairValue: {
+      price: [330, 335, 340, 350, 365, 375, 390, 405, 415, 420, 410, 416.78],
+      fairValue: [360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410, 415]
+    },
+    revEarnings: {
+      revenue: [168.1, 198.3, 211.9, 225.0, 245.0, 270.0],
+      netIncome: [61.3, 72.7, 72.4, 80.0, 89.0, 100.0]
+    },
+    snowflake: [3, 4, 4, 5, 2], // Value, Future, Past, Health, Dividend
+    dividend: [2.24, 2.48, 2.72, 3.00, 3.30, 3.60]
+  },
+  GOOGL: {
+    sym: 'GOOGL',
+    name: 'Alphabet Inc.',
+    price: 174.15,
+    chg: 1.10,
+    spark: [155, 158, 162, 166, 170, 172, 174],
+    color: '#4a3aa7',
+    keyStats: { marketCap: '$2.17T', pe: '26.8', high52: '$180.40', low52: '$115.50' },
+    priceFairValue: {
+      price: [122, 128, 131, 137, 133, 140, 142, 147, 152, 165, 173, 174.15],
+      fairValue: [150, 153, 156, 159, 162, 165, 168, 171, 174, 177, 180, 183]
+    },
+    revEarnings: {
+      revenue: [257.6, 282.8, 307.4, 325.0, 355.0, 390.0],
+      netIncome: [76.0, 60.0, 73.8, 82.0, 93.0, 105.0]
+    },
+    snowflake: [4, 4, 4, 5, 1], // Value, Future, Past, Health, Dividend
+    dividend: [0.00, 0.00, 0.00, 0.80, 0.88, 0.96]
+  },
+  AMZN: {
+    sym: 'AMZN',
+    name: 'Amazon.com Inc.',
+    price: 186.30,
+    chg: 0.43,
+    spark: [178, 180, 182, 183, 184, 185, 186],
+    color: '#eb6834',
+    keyStats: { marketCap: '$1.93T', pe: '41.3', high52: '$191.70', low52: '$112.50' },
+    priceFairValue: {
+      price: [130, 135, 138, 126, 142, 150, 155, 168, 175, 180, 185, 186.30],
+      fairValue: [160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204]
+    },
+    revEarnings: {
+      revenue: [469.8, 514.0, 574.8, 610.0, 670.0, 730.0],
+      netIncome: [33.3, -2.7, 30.4, 38.0, 48.0, 58.0]
+    },
+    snowflake: [3, 4, 3, 4, 0], // Value, Future, Past, Health, Dividend
+    dividend: [0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
+  }
+};
+
+// Colors mapping used inside details views
+function fadeColor(hex, opacity) {
+  let r = 42, g = 120, b = 214;
+  if (hex.startsWith('#')) {
+    const raw = hex.slice(1);
+    if (raw.length === 6) {
+      r = parseInt(raw.slice(0, 2), 16);
+      g = parseInt(raw.slice(2, 4), 16);
+      b = parseInt(raw.slice(4, 6), 16);
+    }
+  }
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+// Built Sparklines
 function buildSparkSVG(data, up) {
   const w = 120, h = 32, pad = 2;
   const min = Math.min(...data), max = Math.max(...data);
@@ -297,48 +717,556 @@ function buildSparkSVG(data, up) {
   </svg>`;
 }
 
-const tickerRow = document.getElementById('tickerRow');
-TICKERS.forEach(t => {
-  const up = t.chg >= 0;
-  const card = document.createElement('div');
-  card.className = 'ticker-card';
-  card.innerHTML = `
-    <div class="ticker-accent" style="background:${t.color};"></div>
-    <div class="ticker-body">
-      <div class="ticker-symbol">${t.sym}</div>
-      <div class="ticker-name">${t.name}</div>
-      <div class="ticker-price">$${t.price.toFixed(2)}</div>
-      <div class="ticker-change ${up ? 'up' : 'down'}">${up ? '▲' : '▼'} ${Math.abs(t.chg).toFixed(2)}%</div>
-      ${buildSparkSVG(t.spark, up)}
-    </div>`;
-  tickerRow.appendChild(card);
+// --- Dynamic Ticker Cards Render ---
+function renderTickerCards() {
+  const tickerRow = document.getElementById('tickerRow');
+  tickerRow.innerHTML = '';
+  Object.keys(DATASETS).forEach(sym => {
+    const t = DATASETS[sym];
+    const up = t.chg >= 0;
+    const card = document.createElement('div');
+    card.className = 'ticker-card';
+    card.setAttribute('data-symbol', sym);
+    card.style.position = 'relative';
+    card.addEventListener('click', () => goToDetail(sym));
+    card.innerHTML = `
+      <div class="ticker-body">
+        <div class="ticker-symbol">${t.sym}</div>
+        <div class="ticker-name">${t.name}</div>
+        <div class="ticker-price">$${t.price.toFixed(2)}</div>
+        <div class="ticker-change ${up ? 'up' : 'down'}">${up ? '▲' : '▼'} ${Math.abs(t.chg).toFixed(2)}%</div>
+        ${buildSparkSVG(t.spark, up)}
+      </div>`;
+    tickerRow.appendChild(card);
+  });
+}
+
+// --- Autocomplete Setup ---
+const searchInput = document.getElementById('dashboardSearch');
+const searchDropdown = document.getElementById('searchDropdown');
+
+searchInput.addEventListener('input', (e) => {
+  const query = e.target.value.toUpperCase().trim();
+  if (!query) {
+    searchDropdown.classList.add('hidden');
+    return;
+  }
+  const matches = Object.keys(DATASETS).filter(sym => {
+    return sym.includes(query) || DATASETS[sym].name.toUpperCase().includes(query);
+  });
+  if (matches.length === 0) {
+    searchDropdown.classList.add('hidden');
+    return;
+  }
+  searchDropdown.innerHTML = '';
+  matches.forEach(sym => {
+    const t = DATASETS[sym];
+    const item = document.createElement('div');
+    item.className = 'search-dropdown-item';
+    item.innerHTML = `
+      <span class="dropdown-symbol">${t.sym}</span>
+      <span class="dropdown-name">${t.name}</span>
+    `;
+    item.addEventListener('click', () => {
+      searchInput.value = t.sym;
+      searchDropdown.classList.add('hidden');
+      goToDetail(t.sym);
+    });
+    searchDropdown.appendChild(item);
+  });
+  searchDropdown.classList.remove('hidden');
 });
 
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const query = e.target.value.toUpperCase().trim();
+    if (DATASETS[query]) {
+      searchDropdown.classList.add('hidden');
+      goToDetail(query);
+    }
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+    searchDropdown.classList.add('hidden');
+  }
+});
+
+// --- Navigation Operations ---
+function goToDetail(symbol) {
+  state.view = 'detail';
+  state.activeSymbol = symbol;
+  state.activeCompany = DATASETS[symbol].name;
+  
+  if (state.searchHistory.length === 0 || state.searchHistory[state.searchHistory.length - 1] !== symbol) {
+    state.searchHistory.push(symbol);
+  }
+
+  const dView = document.getElementById('dashboard-view');
+  const detView = document.getElementById('detail-view');
+  
+  dView.style.opacity = '0';
+  setTimeout(() => {
+    dView.style.display = 'none';
+    detView.style.display = 'block';
+    detView.offsetHeight; // force reflow
+    detView.style.opacity = '1';
+
+    renderDetailCharts(symbol);
+    updateBreadcrumb(symbol);
+    highlightActiveTicker();
+    updateWatchlistButtonState();
+  }, 150);
+}
+
+function goBack() {
+  state.view = 'dashboard';
+  
+  const dView = document.getElementById('dashboard-view');
+  const detView = document.getElementById('detail-view');
+  
+  detView.style.opacity = '0';
+  setTimeout(() => {
+    detView.style.display = 'none';
+    dView.style.display = 'block';
+    dView.offsetHeight; // force reflow
+    dView.style.opacity = '1';
+
+    highlightActiveTicker();
+    restoreSearchInput();
+    updateBreadcrumb(null);
+  }, 150);
+}
+
+function restoreSearchInput() {
+  if (state.activeSymbol) {
+    searchInput.value = state.activeSymbol;
+  }
+}
+
+function updateBreadcrumb(symbol) {
+  const trail = document.getElementById('breadcrumbTrail');
+  trail.innerHTML = '';
+  
+  const dashPill = document.createElement('span');
+  dashPill.className = 'breadcrumb-pill';
+  dashPill.innerText = 'Dashboard';
+  dashPill.addEventListener('click', goBack);
+  trail.appendChild(dashPill);
+  
+  const historyCount = state.searchHistory.length;
+  const recentSymbols = state.searchHistory.slice(Math.max(0, historyCount - 3));
+  
+  recentSymbols.forEach(sym => {
+    const sep = document.createElement('span');
+    sep.className = 'breadcrumb-separator';
+    sep.innerText = ' > ';
+    trail.appendChild(sep);
+    
+    const pill = document.createElement('span');
+    pill.className = 'breadcrumb-pill';
+    pill.innerText = sym;
+    pill.addEventListener('click', () => goToDetail(sym));
+    trail.appendChild(pill);
+  });
+}
+
+function highlightActiveTicker() {
+  const cards = document.querySelectorAll('.ticker-card');
+  cards.forEach(card => {
+    const sym = card.getAttribute('data-symbol');
+    card.classList.remove('active-ticker');
+    card.style.borderTop = '1px solid rgba(255,255,255,0.08)';
+    const badge = card.querySelector('.last-viewed-badge');
+    if (badge) badge.remove();
+    
+    if (state.activeSymbol && sym === state.activeSymbol) {
+      card.classList.add('active-ticker');
+      card.style.borderTop = `3px solid ${DATASETS[sym].color}`;
+      
+      const badgeEl = document.createElement('div');
+      badgeEl.className = 'last-viewed-badge';
+      badgeEl.innerText = 'Last viewed';
+      card.appendChild(badgeEl);
+    }
+  });
+}
+
+// Watchlist Button Toggle
+function toggleWatchlist() {
+  if (!state.activeSymbol) return;
+  const btn = document.getElementById('detailWatchlistBtn');
+  if (watchlistSymbols.has(state.activeSymbol)) {
+    watchlistSymbols.delete(state.activeSymbol);
+    btn.innerText = '+ Watchlist';
+  } else {
+    watchlistSymbols.add(state.activeSymbol);
+    btn.innerText = '✓ Watchlist';
+  }
+}
+
+function updateWatchlistButtonState() {
+  if (!state.activeSymbol) return;
+  const btn = document.getElementById('detailWatchlistBtn');
+  if (watchlistSymbols.has(state.activeSymbol)) {
+    btn.innerText = '✓ Watchlist';
+  } else {
+    btn.innerText = '+ Watchlist';
+  }
+}
+
+// --- Detail View Rendering Logic ---
+function renderDetailCharts(symbol) {
+  const t = DATASETS[symbol];
+  document.getElementById('detailSymbolName').innerText = `${t.sym} — ${t.name}`;
+  
+  // Render stats pills
+  const statsContainer = document.getElementById('detailKeyStats');
+  statsContainer.innerHTML = `
+    <div class="stat-pill">
+      <span class="stat-pill-label">Market Cap</span>
+      <span class="stat-pill-value">${t.keyStats.marketCap}</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">P/E Ratio</span>
+      <span class="stat-pill-value">${t.keyStats.pe}</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">52W High</span>
+      <span class="stat-pill-value">${t.keyStats.high52}</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">52W Low</span>
+      <span class="stat-pill-value">${t.keyStats.low52}</span>
+    </div>
+  `;
+
+  // Check cache (and clean up if switching symbols)
+  if (chartCache[symbol]) return;
+  for (const k in chartCache) {
+    delete chartCache[k];
+  }
+  chartCache[symbol] = true;
+  
+  // Destroy old Chart.js instances if present
+  if (state.chartInstances['priceChart']) state.chartInstances['priceChart'].destroy();
+  if (state.chartInstances['revenueChart']) state.chartInstances['revenueChart'].destroy();
+  if (state.chartInstances['dividendChart']) state.chartInstances['dividendChart'].destroy();
+  
+  const years = ['2021','2022','2023','2024','2025F','2026F'];
+  const isForecast = [false,false,false,false,true,true];
+
+  // 1. Price vs Fair Value Chart (line chart)
+  const priceCtx = document.getElementById('detailPriceChart').getContext('2d');
+  const pf = t.priceFairValue;
+  const months = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+  
+  const upperBand = pf.fairValue.map(v => v * 1.15);
+  const lowerBand = pf.fairValue.map(v => v * 0.85);
+
+  state.chartInstances['priceChart'] = new Chart(priceCtx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'Upper Band',
+          data: upperBand,
+          fill: '+1',
+          backgroundColor: 'rgba(27,175,122,0.06)',
+          borderColor: 'transparent',
+          pointRadius: 0,
+          tension: 0.4,
+        },
+        {
+          label: 'Lower Band',
+          data: lowerBand,
+          fill: false,
+          borderColor: 'transparent',
+          pointRadius: 0,
+          tension: 0.4,
+        },
+        {
+          label: 'Fair Value',
+          data: pf.fairValue,
+          fill: false,
+          borderColor: C.teal,
+          borderWidth: 1.8,
+          borderDash: [4, 4],
+          pointRadius: 0,
+          tension: 0.4,
+        },
+        {
+          label: 'Stock Price',
+          data: pf.price,
+          fill: false,
+          borderColor: t.color,
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.4,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#222',
+          titleColor: '#fff',
+          bodyColor: '#ccc',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 8,
+          filter: item => item.dataset.label === 'Stock Price' || item.dataset.label === 'Fair Value',
+          callbacks: { label: t => ` ${t.dataset.label}: $${t.raw}` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: C.muted, font: { size: 9 } }, grid: { display: false } },
+        y: {
+          ticks: { color: C.muted, font: { size: 9 }, callback: v => `$${v}` },
+          grid: { color: C.grid }
+        }
+      }
+    }
+  });
+
+  // 2. Revenue vs Earnings Chart (bar chart)
+  const revCtx = document.getElementById('detailRevChart').getContext('2d');
+  const re = t.revEarnings;
+  
+  const solidColor = t.color;
+  const fcastColor = fadeColor(t.color, 0.35);
+  const solidTeal = '#1baf7a';
+  const fcastTeal = 'rgba(27,175,122,0.35)';
+  
+  const revColors = isForecast.map(f => f ? fcastColor : solidColor);
+  const incColors = isForecast.map(f => f ? fcastTeal : solidTeal);
+
+  state.chartInstances['revenueChart'] = new Chart(revCtx, {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [
+        {
+          label: 'Revenue ($B)',
+          data: re.revenue,
+          backgroundColor: revColors,
+          borderRadius: 4,
+        },
+        {
+          label: 'Net Income ($B)',
+          data: re.netIncome,
+          backgroundColor: incColors,
+          borderRadius: 4,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#222',
+          titleColor: '#fff',
+          bodyColor: '#ccc',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 8
+        }
+      },
+      scales: {
+        x: { ticks: { color: C.muted, font: { size: 9 } }, grid: { display: false } },
+        y: {
+          ticks: { color: C.muted, font: { size: 9 }, callback: v => `$${v}B` },
+          grid: { color: C.grid }
+        }
+      }
+    }
+  });
+
+  // 3. Snowflake Pentagon Chart
+  drawDetailSnowflake(t.snowflake, t.color);
+
+  // 4. Dividend Forecast (bar chart)
+  const divCtx = document.getElementById('detailDivChart').getContext('2d');
+  const dpsData = t.dividend;
+  const divColors = isForecast.map(f => f ? 'rgba(74,58,167,0.35)' : '#4a3aa7');
+
+  state.chartInstances['dividendChart'] = new Chart(divCtx, {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [{
+        label: 'Dividend / Share',
+        data: dpsData,
+        backgroundColor: divColors,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#222',
+          bodyColor: '#ccc',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 8,
+          callbacks: { label: t => ` DPS: $${t.raw.toFixed(2)}` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: C.muted, font: { size: 9 } }, grid: { display: false } },
+        y: {
+          ticks: { color: C.muted, font: { size: 9 }, callback: v => `$${v.toFixed(2)}` },
+          grid: { color: C.grid }
+        }
+      }
+    }
+  });
+}
+
+function drawDetailSnowflake(scores, accentColor) {
+  const canvas = document.getElementById('detailSnowflakeCanvas');
+  const legendEl = document.getElementById('detailSnowflakeLegend');
+  legendEl.innerHTML = '';
+  
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const size = 110;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  ctx.scale(dpr, dpr);
+
+  const cx = size / 2, cy = size / 2;
+  const maxR = 36;
+  const MAX = 5;
+  const RINGS = 5;
+  
+  const AXES = [
+    { name: 'Val', score: scores[0], color: C.blue },
+    { name: 'Fut', score: scores[1], color: C.teal },
+    { name: 'Pst', score: scores[2], color: C.amber },
+    { name: 'Hth', score: scores[3], color: C.violet },
+    { name: 'Div', score: scores[4], color: C.orange },
+  ];
+  const N = AXES.length;
+  const angle0 = -Math.PI / 2;
+
+  function angleFor(i) { return angle0 + (2 * Math.PI / N) * i; }
+  function pointAt(r, i) {
+    const a = angleFor(i);
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+  }
+
+  for (let ring = 1; ring <= RINGS; ring++) {
+    const r = (ring / RINGS) * maxR;
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const p = pointAt(r, i);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  AXES.forEach((_, i) => {
+    const p = pointAt(maxR, i);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  });
+
+  AXES.forEach((a, i) => {
+    const p = pointAt(maxR + 8, i);
+    ctx.fillStyle = '#898781';
+    ctx.font = `bold 7px 'Inter', system-ui`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(a.name, p.x, p.y);
+  });
+
+  ctx.beginPath();
+  AXES.forEach((a, i) => {
+    const r = (a.score / MAX) * maxR;
+    const p = pointAt(r, i);
+    i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = fadeColor(accentColor, 0.18);
+  ctx.fill();
+  ctx.strokeStyle = accentColor;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  AXES.forEach((a, i) => {
+    const r = (a.score / MAX) * maxR;
+    const p = pointAt(r, i);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = a.color;
+    ctx.fill();
+    ctx.strokeStyle = '#1e1e1e';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  AXES.forEach(a => {
+    const item = document.createElement('div');
+    item.className = 'sf-legend-item';
+    item.style.marginBottom = '3px';
+    item.innerHTML = `
+      <div class="sf-legend-row" style="margin-bottom: 2px;">
+        <span class="sf-legend-name" style="font-size: 9px; color: #aaa;">${a.name}</span>
+        <span class="sf-legend-score" style="color:${a.color}; font-size: 9px; font-weight:700;">${a.score}/5</span>
+      </div>
+      <div class="sf-bar-track" style="height: 3px;">
+        <div class="sf-bar-fill" style="width:${(a.score/5)*100}%; background:${a.color};"></div>
+      </div>`;
+    legendEl.appendChild(item);
+  });
+}
+
+// Initial render
+renderTickerCards();
+
 /* ══════════════════════════════════════════════════════════════════════════
-   2. REVENUE vs EARNINGS BAR CHART
+   2. REVENUE vs EARNINGS BAR CHART (Overall dashboard view default)
+   This remains active for the default #dashboard-view.
 ══════════════════════════════════════════════════════════════════════════ */
 (function() {
   const ctx = document.getElementById('revenueEarningsChart').getContext('2d');
   const labels = ['2021','2022','2023','2024','2025F','2026F'];
   const isForecast = [false,false,false,false,true,true];
-
   const revData  = [274.5, 394.3, 383.3, 391.0, 418.0, 452.0];
   const incData  = [94.7,  99.8,  97.0,  101.0, 116.0, 130.0];
-
   const solidBlue  = '#2a78d6';
   const solidTeal  = '#1baf7a';
   const fcastBlue  = 'rgba(42,120,214,0.35)';
   const fcastTeal  = 'rgba(27,175,122,0.35)';
-
   const revColors = isForecast.map(f => f ? fcastBlue : solidBlue);
   const incColors = isForecast.map(f => f ? fcastTeal : solidTeal);
 
-  // Plugin to draw dashed line + label between past/forecast
   const forecastDividerPlugin = {
     id: 'forecastDivider',
     afterDraw(chart) {
       const { ctx: c, chartArea: { top, bottom }, scales: { x } } = chart;
-      // Index 3.5 is midpoint between 2024 and 2025F
       const xPos = x.getPixelForValue(3.5);
       c.save();
       c.setLineDash([5, 4]);
@@ -348,11 +1276,6 @@ TICKERS.forEach(t => {
       c.moveTo(xPos, top);
       c.lineTo(xPos, bottom);
       c.stroke();
-      c.setLineDash([]);
-      c.fillStyle = 'rgba(255,255,255,0.35)';
-      c.font = "bold 9px 'Inter', sans-serif";
-      c.textAlign = 'center';
-      c.fillText('Forecast →', xPos + 28, top + 12);
       c.restore();
     }
   };
@@ -363,20 +1286,8 @@ TICKERS.forEach(t => {
     data: {
       labels,
       datasets: [
-        {
-          label: 'Revenue ($B)',
-          data: revData,
-          backgroundColor: revColors,
-          borderRadius: 4,
-          borderSkipped: false,
-        },
-        {
-          label: 'Net Income ($B)',
-          data: incData,
-          backgroundColor: incColors,
-          borderRadius: 4,
-          borderSkipped: false,
-        }
+        { label: 'Revenue ($B)', data: revData, backgroundColor: revColors, borderRadius: 4 },
+        { label: 'Net Income ($B)', data: incData, backgroundColor: incColors, borderRadius: 4 }
       ]
     },
     options: {
@@ -384,26 +1295,11 @@ TICKERS.forEach(t => {
       maintainAspectRatio: true,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: {
-          labels: { color: C.muted, boxWidth: 10, padding: 12, font: { size: 11 } }
-        },
-        tooltip: {
-          backgroundColor: '#222',
-          titleColor: '#fff',
-          bodyColor: '#ccc',
-          borderColor: 'rgba(255,255,255,0.1)',
-          borderWidth: 1,
-          padding: 10,
-          callbacks: { label: t => ` ${t.dataset.label}: $${t.raw}B` }
-        }
+        legend: { labels: { color: C.muted, boxWidth: 10 } }
       },
       scales: {
-        x: { ticks: { color: C.muted, font: { size: 10 } }, grid: { display: false } },
-        y: {
-          ticks: { color: C.muted, font: { size: 10 }, callback: v => `$${v}B` },
-          grid: { color: C.grid },
-          beginAtZero: false
-        }
+        x: { ticks: { color: C.muted }, grid: { display: false } },
+        y: { ticks: { color: C.muted, callback: v => `$${v}B` }, grid: { color: C.grid } }
       }
     }
   });

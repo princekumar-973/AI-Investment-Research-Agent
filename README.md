@@ -29,6 +29,7 @@ InvestIQ is a full-stack web application that lets you research any publicly lis
 | 📊 Chart.js Visualizations | 3 interactive charts: Revenue, Score Breakdown, Market Cap Comparison |
 | 🔑 Env-variable API Keys | All secrets in `.env`, never in source code |
 | ⚡ REST API | Full DRF API at `/api/analyze/` and `/api/ticker-search/` |
+| 📈 Premium SWS Dashboard | Sleek `/market/` view with autocomplete, breadcrumb search history trail, 4 detail charts, and state-preserving navigation |
 
 ---
 
@@ -126,7 +127,8 @@ investment_agent/
 │   └── __init__.py             # format_currency, safe_pct, clamp helpers
 │
 ├── templates/
-│   └── dashboard.html          # Main SPA-style dashboard
+│   ├── dashboard.html          # Main SPA-style dashboard
+│   └── market_dashboard.html   # Simply Wall St-inspired stocks dashboard
 │
 └── static/
     ├── css/styles.css          # Premium dark-theme stylesheet
